@@ -1,0 +1,49 @@
+mat-form-field{
+    padding:5px;
+}
+.float-right{
+    float:right;
+}
+table{
+    width:100%;
+}
+mat-card{
+    padding-bottom: 30px !important;
+}
+.bold-header {
+    font-weight: bold;
+    font-size: 18px;
+    color: #333; /* Optional: Change text color */
+    text-transform: uppercase; /* Optional: Make text uppercase */
+}
+
+.product-description {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.product-image {
+    max-width: 100px;  /* Adjust size as needed */
+    height: auto;
+    margin-bottom: 8px;
+}
+  
+.round-card {
+    width: 120px;  /* Set a fixed width */
+    height: 120px; /* Set a fixed height */
+    border-radius: 50%; /* This makes the container round */
+    overflow: hidden; /* Ensures the image fits within the round container */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0; /* Optional background color */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for card-like appearance */
+  }
+  
+  .round-image {
+    width: 100%; /* Make image fill the container */
+    height: 100%; /* Make image fill the container */
+    object-fit: cover; /* Ensure the image is not distorted and covers the entire container */
+  }
+  

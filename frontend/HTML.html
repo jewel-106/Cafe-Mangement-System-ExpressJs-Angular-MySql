@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Clone</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #3b5998;
+            padding: 10px;
+            color: white;
+        }
+        .search-bar {
+            padding: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px;
+        }
+        .left-sidebar, .right-sidebar {
+            width: 20%;
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        .feed {
+            width: 55%;
+        }
+        .post-box {
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .post {
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .post-actions button {
+            background-color: #3b5998;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <div class="logo">Facebook</div>
+            <input type="text" placeholder="Search Facebook" class="search-bar">
+            <div class="profile">Profile</div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <aside class="left-sidebar">
+            <ul>
+                <li>Home</li>
+                <li>Friends</li>
+                <li>Watch</li>
+                <li>Marketplace</li>
+                <li>Groups</li>
+            </ul>
+        </aside>
+        
+        <main class="feed">
+            <div class="post-box">
+                <input type="text" placeholder="What's on your mind?">
+                <button>Post</button>
+            </div>
+            
+            <div class="post">
+                <div class="post-header">John Doe</div>
+                <div class="post-content">Enjoying a great day!</div>
+                <div class="post-actions">
+                    <button>Like</button>
+                    <button>Comment</button>
+                </div>
+            </div>
+        </main>
+        
+        <aside class="right-sidebar">
+            <div class="friend-requests">Friend Requests</div>
+            <div class="birthdays">Today's Birthdays</div>
+            <div class="contacts">Contacts</div>
+        </aside>
+    </div>
+</body>
+</html>
