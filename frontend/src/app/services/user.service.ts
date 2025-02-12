@@ -40,5 +40,8 @@ export class UserService {
       headers:new HttpHeaders().set('Content-Type',"application/json")
     })
   }
+  getUserDetails(){
+    return this.httpClient.get(this.url+"/user/getUserDetails/");
+  }
 
 }

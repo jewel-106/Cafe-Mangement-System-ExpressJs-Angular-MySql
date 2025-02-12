@@ -1,7 +1,35 @@
-<button [matMenuTriggerFor]="profile" mat-icon-button class="m-r-5">
-    <mat-icon>account_circle</mat-icon>
-</button>
+<style>
+    .profile-btn {
+        padding: 0; /* Remove extra button padding */
+        border: none;
+        background: transparent;
+        display: flex;
+        align-items: center;
+    }
+    
+    .profile-img {
+        width: 36px; /* Adjust size */
+        height: 36px; 
+        border-radius: 50%; /* Make it circular */
+        object-fit: cover; /* Ensure the image is properly cropped */
+        border: 2px solid #fff; /* Optional: Add border for a clean look */
+    }
+    </style>
+    
+    <button [matMenuTriggerFor]="profile" mat-icon-button class="profile-btn">
+        <img src="https://scontent.fdac24-5.fna.fbcdn.net/v/t39.30808-6/469189971_2025237167921474_3446367088872293054_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=n_RRbbb1aa8Q7kNvgGOJlJE&_nc_zt=23&_nc_ht=scontent.fdac24-5.fna&_nc_gid=ALFvZNMC_JaNlOSG6tjVYXY&oh=00_AYAmFiU79s3l2STdX-zZ4yGC9q3PpjeuOw0AYl7MYWYfvQ&oe=67B127C5" 
+             alt="Profile" class="profile-img">
+    </button>
+    
+
+
 <mat-menu #profile="matMenu" class="mymegamenu">
+    <button mat-menu-item (click)="viewProfile()">
+        <mat-icon>visibility</mat-icon> View Profile
+    </button>
+    <button mat-menu-item (click)="editProfile()">
+        <mat-icon>edit</mat-icon> Edit Profile
+    </button>
     <button mat-menu-item (click)="changePassword()">
         <mat-icon>password</mat-icon> Change Password
     </button>

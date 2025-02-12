@@ -9,6 +9,7 @@ import { GlobalConstants } from 'src/app/shared/global-constants';
 import { ViewBillProductsComponent } from '../dialog/view-bill-products/view-bill-products.component';
 import { ConfirmationComponent } from '../dialog/confirmation/confirmation.component';
 import { saveAs } from 'file-saver';
+import { ViewProfileComponent } from '../dialog/view-profile/view-profile.component';
 
 @Component({
   selector: 'app-view-bill',

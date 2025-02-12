@@ -1,0 +1,46 @@
+<mat-card class="profile-container">
+    <div class="profile-header">
+        <img [src]="user.image || 'https://scontent.fdac24-4.fna.fbcdn.net/v/t39.30808-6/412234409_1785240061921187_5265257841711625093_n.jpg?stp=dst-jpg_s600x600_tt6&_nc_cat=109&ccb=1-7&_nc_sid=833d8c&_nc_ohc=proG5FEOva0Q7kNvgFYq2uv&_nc_zt=23&_nc_ht=scontent.fdac24-4.fna&_nc_gid=A8GoiWIJq8Qjsh0oaAzfYs2&oh=00_AYDcQ3TUlFx5Uyj9RKgLntgLBrjYl4RuvzxIL3vB2A8kYw&oe=67B10695'" alt="Profile Image" class="profile-image">
+        <h2>{{ user.name }}</h2>
+        <mat-chip [color]="user.status === 'Active' ? 'primary' : 'warn'">
+            {{ user.status }}
+        </mat-chip>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-content *ngFor="let user of dataSource" class="profile-details">
+        <div class="info-row">
+            <mat-icon>email</mat-icon>
+            <span><strong>Email:</strong> {{ user.email }}</span>
+        </div>
+        
+        <div class="info-row">
+            <mat-icon>phone</mat-icon>
+            <span><strong>Contact:</strong> {{ user.contactNumber }}</span>
+        </div>
+
+        <div class="info-row">
+            <mat-icon>vpn_key</mat-icon>
+            <span><strong>Password:</strong> ********</span>
+            <button mat-button color="primary" (click)="changePassword()">Change</button>
+        </div>
+
+        <div class="info-row">
+            <mat-icon>verified_user</mat-icon>
+            <span><strong>Role:</strong> {{ user.role }}</span>
+        </div>
+    </mat-card-content>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-actions class="action-buttons">
+        <button mat-flat-button color="accent" (click)="editProfile()">
+            <mat-icon>edit</mat-icon> Edit Profile
+        </button>
+
+        <button mat-flat-button color="warn" (click)="deleteAccount()">
+            <mat-icon>delete</mat-icon> Delete Account
+        </button>
+    </mat-card-actions>
+</mat-card>
