@@ -92,7 +92,7 @@ This project is licensed under the MIT License.
 
 ---
 ### Developer
-**Jewel Rana**
+**Md. Jewel Rana**
 
 [LinkedIn](https://www.linkedin.com/in/jewel-rana-cse19duet/)  |  [GitHub](https://github.com/jewel-106)
 
