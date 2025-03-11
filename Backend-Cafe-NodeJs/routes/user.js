@@ -1,13 +1,23 @@
 const express = require("express");
-
 const connection = require("../connection");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 require("dotenv").config();
+const bcrypt = require("bcryptjs");
 var auth = require("../services/authentication");
 var checkRole = require("../services/checkRole");
 
+var transporter = nodemailer.createTransport({
+  host: "sandbox.smtp.mailtrap.io",
+  port: 2525,
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.PASSWORD,
+  },
+});
+
+// Signup - Create new user
 router.post("/signup", (req, res) => {
   let user = req.body;
   query = "select email,password,role,status from user where email = ?";
@@ -18,7 +28,7 @@ router.post("/signup", (req, res) => {
           "insert into user(name,contactNumber,email,password,status,role) values(?,?,?,?,'false','user')";
         connection.query(
           query,
-          [user.name, user.contactNumber, user.email, user.password],
+          [user.name, user.contactNumber, user.email, bcrypt.hashSync(user.password, 10)],
           (err, result) => {
             if (!err) {
               return res
@@ -37,27 +47,25 @@ router.post("/signup", (req, res) => {
     }
   });
 });
+
+// Login - User login
 router.post("/login", (req, res) => {
   const user = req.body;
   query = "select email,password,role,status from user where email=?";
   connection.query(query, [user.email], (err, results) => {
     if (!err) {
-      if (results.length <= 0 || results[0].password != user.password) {
+      if (results.length <= 0 || !bcrypt.compareSync(user.password, results[0].password)) {
         return res
           .status(401)
           .json({ message: "Incorrect Username or Password" });
       } else if (results[0].status == "false") {
         return res.status(401).json({ message: "Wait for Admin Approval" });
-      } else if (results[0].password == user.password) {
+      } else {
         const response = { email: results[0].email, role: results[0].role };
         const accessToken = jwt.sign(response, process.env.ACCESS_TOKEN, {
           expiresIn: "8h",
         });
         res.status(200).json({ token: accessToken });
-      } else {
-        return res
-          .status(400)
-          .json({ message: "something went wrong please try again later!" });
       }
     } else {
       return res.status(500).json(err);
@@ -65,44 +73,41 @@ router.post("/login", (req, res) => {
   });
 });
 
-var transporter = nodemailer.createTransport({
-  host: "sandbox.smtp.mailtrap.io",
-  port: 2525,
-  auth: {
-    user: process.env.EMAIL,
-    pass: process.env.PASSWORD,
-  },
-});
-
+// Forgot Password - Generate OTP and send via email
 router.post("/forgotpassword", (req, res) => {
   const user = req.body;
-  query = "select email,password from user where email=?";
+  query = "select email from user where email=?";
   connection.query(query, [user.email], (err, results) => {
     if (!err) {
       if (results.length <= 0) {
-        return res.status(200).json({ message: "Email not found." });
+        return res.status(400).json({ message: "Email not found." });
       } else {
-        var mailtOptions = {
-          from: process.env.EMAIL,
-          to: results[0].email,
-          subject: "Password by Cafe Management System",
-          html:
-            "<p><b>Your Login details for Cafe Management System</b><br><b>Email: </b> " +
-            results[0].email +
-            "<br><b>Password: </b>" +
-            results[0].password +
-            '<br> <a href="http://localhost:4200">Click here to login</a></p>',
-        };
-        transporter.sendMail(mailtOptions, function (error, info) {
-          if (error) {
-            console.log(error);
+        const otp = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
+
+        // Save OTP to the database with check_otp false (not verified yet)
+        query = "insert into otp_requests (email, otp, check_otp) values (?, ?, false)";
+        connection.query(query, [user.email, otp], (err, result) => {
+          if (!err) {
+            // Send OTP via email
+            var mailOptions = {
+              from: process.env.EMAIL,
+              to: user.email,
+              subject: "Password Reset OTP for Cafe Management System",
+              html: `<p>Your OTP to reset your password is: <b>${otp}</b></p>
+                     <p><b>Note:</b> OTP is valid for 15 minutes only.</p>`,
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+              if (error) {
+                return res.status(500).json({ message: "Failed to send OTP." });
+              } else {
+                return res.status(200).json({ message: "OTP sent successfully to your email." });
+              }
+            });
           } else {
-            console.log("Email sent: " + info.response);
+            return res.status(500).json(err);
           }
         });
-        return res
-          .status(200)
-          .json({ message: "Password sent successfully to you email." });
       }
     } else {
       return res.status(500).json(err);
@@ -110,6 +115,55 @@ router.post("/forgotpassword", (req, res) => {
   });
 });
 
+// Verify OTP - To verify the OTP sent via email
+router.post("/verifyOtp", (req, res) => {
+  const { email, otp } = req.body;
+  query = "select * from otp_requests where email=? and otp=? and check_otp=false";
+  connection.query(query, [email, otp], (err, results) => {
+    if (!err) {
+      if (results.length <= 0) {
+        return res.status(400).json({ message: "Invalid OTP or OTP already verified." });
+      } else {
+        // Update OTP status to true (verified)
+        query = "update otp_requests set check_otp=true where email=? and otp=?";
+        connection.query(query, [email, otp], (err, result) => {
+          if (!err) {
+            return res.status(200).json({ message: "OTP verified. You can now reset your password." });
+          } else {
+            return res.status(500).json(err);
+          }
+        });
+      }
+    } else {
+      return res.status(500).json(err);
+    }
+  });
+});
+
+// Reset Password - After OTP verification
+router.post("/resetPassword", (req, res) => {
+  const { email, newPassword } = req.body;
+  const hashedNewPassword = bcrypt.hashSync(newPassword, 10); // Hash the new password
+
+  query = "update user set password=? where email=?";
+  connection.query(query, [hashedNewPassword, email], (err, results) => {
+    if (!err) {
+      // Optionally, delete the OTP after password reset
+      query = "delete from otp_requests where email=?";
+      connection.query(query, [email], (err, result) => {
+        if (!err) {
+          return res.status(200).json({ message: "Password reset successfully." });
+        } else {
+          return res.status(500).json(err);
+        }
+      });
+    } else {
+      return res.status(500).json(err);
+    }
+  });
+});
+
+// Get All Users - Admin Only (authentication and authorization)
 router.get("/get", auth.authenticateToken, checkRole.checkRole, (req, res) => {
   var query =
     "select id,name,email,contactNumber,status from user where role='user'";
@@ -122,6 +176,7 @@ router.get("/get", auth.authenticateToken, checkRole.checkRole, (req, res) => {
   });
 });
 
+// Update User Status - Admin Only
 router.patch(
   "/update",
   auth.authenticateToken,
@@ -142,38 +197,43 @@ router.patch(
   }
 );
 
+// Check Token - To verify the authentication token
 router.get("/checkToken", auth.authenticateToken, (req, res) => {
   return res.status(200).json({ message: "true" });
 });
 
+// Change Password - After authenticating the user
 router.post("/changePassword", auth.authenticateToken, (req, res) => {
   const user = req.body;
-  const email = res.locals.email;
-  var query = "select * from user where email=? and password=?";
-  connection.query(query, [email, user.oldPassword], (err, results) => {
+  const email = res.locals.email; // Email from the token
+
+  // First, get the user's current hashed password from the database
+  var query = "select password from user where email=?";
+  connection.query(query, [email], (err, results) => {
     if (!err) {
       if (results.length <= 0) {
-        return res.status(400).json({ message: "Incorrect Old Password" });
-      } else if (results[0].password == user.oldPassword) {
-        query = "update user set password=? where email=?";
-        connection.query(query, [user.newPassword, email], (err, results) => {
-          if (!err) {
-            return res
-              .status(200)
-              .json({ message: "Password Updated Successfully." });
-          } else {
-            return res.status(500).json(err);
-          }
-        });
-      } else {
-        return res
-          .status(400)
-          .json({ message: "something went wrong. Please try again later" });
+        return res.status(400).json({ message: "User not found" });
       }
+
+      // Compare the provided oldPassword with the hashed password from the database
+      if (!bcrypt.compareSync(user.oldPassword, results[0].password)) {
+        return res.status(400).json({ message: "Incorrect Old Password" });
+      }
+
+      // Hash the new password before updating it
+      query = "update user set password=? where email=?";
+      connection.query(query, [bcrypt.hashSync(user.newPassword, 10), email], (err, results) => {
+        if (!err) {
+          return res.status(200).json({ message: "Password Updated Successfully." });
+        } else {
+          return res.status(500).json(err);
+        }
+      });
     } else {
       return res.status(500).json(err);
     }
   });
 });
+
 
 module.exports = router;
