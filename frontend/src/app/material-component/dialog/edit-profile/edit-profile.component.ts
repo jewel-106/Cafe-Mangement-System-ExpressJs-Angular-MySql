@@ -1,6 +1,9 @@
 
 
 
+
+
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -40,7 +43,6 @@ export class EditProfileComponent implements OnInit {
   ngOnInit(): void {}
 
   // Handle file selection
-  
   onFileSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
@@ -49,7 +51,7 @@ export class EditProfileComponent implements OnInit {
         return;
       }
       this.selectedFile = file;
-  
+
       // Preview the image
       const reader = new FileReader();
       reader.onload = () => {
@@ -86,6 +88,9 @@ export class EditProfileComponent implements OnInit {
           this.user = response.user;
           this.snackbarService.openSnackBar("Profile updated successfully", "success");
           this.dialogRef.close(this.user); // Pass the updated data back to the parent component
+
+          // Navigate to the cafe/dashboard page
+          this.router.navigate(['/cafe/dashboard']);
         } else {
           console.error("Invalid response format: 'user' property missing");
           this.snackbarService.openSnackBar("Failed to update profile", "error");
@@ -101,15 +106,13 @@ export class EditProfileComponent implements OnInit {
   }
 }
 
-
-
 // import { Component, Inject, OnInit } from '@angular/core';
 // import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 // import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 // import { UserService } from 'src/app/services/user.service';
 // import { SnackbarService } from 'src/app/services/snackbar.service';
 // import { NgxUiLoaderService } from 'ngx-ui-loader';
-// import { Router } from '@angular/router'; // <-- Import Router
+// import { Router } from '@angular/router';
 
 // @Component({
 //   selector: 'app-edit-profile',
@@ -118,8 +121,10 @@ export class EditProfileComponent implements OnInit {
 // })
 // export class EditProfileComponent implements OnInit {
 //   profileForm: FormGroup;
-//   user:any;
-  
+//   user: any;
+//   selectedFile: File | null = null; // To store the selected file
+//   imagePreview: string | null = null;
+
 //   constructor(
 //     public dialogRef: MatDialogRef<EditProfileComponent>,
 //     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -139,42 +144,53 @@ export class EditProfileComponent implements OnInit {
 
 //   ngOnInit(): void {}
 
-//   // updateProfile() {
-//   //   if (this.profileForm.invalid) {
-//   //     return;
-//   //   }
-//   //   this.ngxService.start();
-//   //   this.userService.updateProfile(this.profileForm.value).subscribe(
-//   //     (response: any) => {
-//   //       this.ngxService.stop();
-//   //       this.snackbarService.openSnackBar("Profile updated successfully", "success");
-//   //       this.dialogRef.close();
-//   //       setTimeout(() => {
-//   //         this.router.navigate(['/login']);
-//   //       }, 300);
-//   //     },
-//   //     (error: any) => {
-//   //       this.ngxService.stop();
-//   //       const message = error.error?.message || "Something went wrong!";
-//   //       this.snackbarService.openSnackBar(message, "error");
-//   //     }
-//   //   );
-//   // }
+//   // Handle file selection
+  
+//   onFileSelected(event: any): void {
+//     const file = event.target.files[0];
+//     if (file) {
+//       if (file.size > 10 * 1024 * 1024) {  // 10 MB limit
+//         alert('File size exceeds the limit of 10MB');
+//         return;
+//       }
+//       this.selectedFile = file;
+  
+//       // Preview the image
+//       const reader = new FileReader();
+//       reader.onload = () => {
+//         this.imagePreview = reader.result as string;
+//       };
+//       reader.readAsDataURL(file);
+//     }
+//   }
 
 //   updateProfile() {
 //     if (this.profileForm.invalid) {
 //       return;
 //     }
+
 //     this.ngxService.start();
-//     this.userService.updateProfile(this.profileForm.value).subscribe(
+
+//     // Create a FormData object to send the form data and file
+//     const formData = new FormData();
+//     formData.append('name', this.profileForm.value.name);
+//     formData.append('contactNumber', this.profileForm.value.contactNumber);
+//     formData.append('email', this.profileForm.value.email);
+
+//     if (this.selectedFile) {
+//       formData.append('profilePhoto', this.selectedFile);
+//     }
+
+//     this.userService.updateProfile(formData).subscribe(
 //       (response: any) => {
 //         this.ngxService.stop();
 //         console.log("API Response:", response); // Debugging: Log the response
-  
+
 //         if (response.user) {
 //           // Update the local user data with the response
 //           this.user = response.user;
 //           this.snackbarService.openSnackBar("Profile updated successfully", "success");
+//           this.dialogRef.close(this.user); // Pass the updated data back to the parent component
 //         } else {
 //           console.error("Invalid response format: 'user' property missing");
 //           this.snackbarService.openSnackBar("Failed to update profile", "error");
@@ -189,3 +205,6 @@ export class EditProfileComponent implements OnInit {
 //     );
 //   }
 // }
+
+
+

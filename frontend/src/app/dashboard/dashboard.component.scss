@@ -1,80 +1,187 @@
-.position-relative {
-	position: relative;
-}
-
-.add-contact {
-	position: absolute;
-    right: 17px;
-    top: 57px;
-}
-
+/* General Styles */
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background-color: #f5f5f5;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+/* Dashboard Header */
+.dashboard-header {
+  text-align: center;
+  padding: 20px;
+  background-color: #3f51b5;
+  color: white;
+  font-size: 1.5em;
+}
+
+/* Summary Cards */
+.row {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.column {
+  flex: 1;
+  margin: 0 10px;
+}
+
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  border-radius: 10px;
+  background-color: white;
+}
+
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+.container {
+  padding: 16px;
+  text-align: center;
+}
+
+.title {
+  color: #333;
+  font-size: 1.2em;
+}
+
+.button {
+  border: none;
+  outline: none;
+  display: inline-block;
+  padding: 10px 20px;
+  color: white;
+  background-color: #e53935;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #d32f2f;
+}
+
+/* Food Items Grid */
+.food-header {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 3em;
+  color: #333;
+}
+
+.food-card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+}
+
+.food-card:hover {
+  transform: translateY(-5px); /* Lift the card slightly */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Add a shadow */
+}
+
+.food-card img {
+  height: 200px;
+  object-fit: cover;
+}
+
+.food-card h2 {
+  font-size: 1.5em;
+  margin: 10px 0;
+  color: #333;
+}
+
+.food-card p {
+  font-size: 1em;
+  color: #666;
+}
+
+.food-card .price {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #e91e63;
+}
+
+/* Action Buttons */
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+.action-button mat-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+.action-button[color="primary"] {
+  background-color: #3f51b5;
+  color: white;
+}
+
+.action-button[color="primary"]:hover {
+  background-color: #50e515; /* Change to a green color */
+  transform: translateY(-2px); /* Lift the button slightly */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow */
+}
+
+.action-button[color="accent"] {
+  background-color: #ff4081;
+  color: white;
+}
+
+.action-button[color="accent"]:hover {
+  background-color: #50e515; /* Change to a green color */
+  transform: translateY(-2px); /* Lift the button slightly */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow */
+}
+
+/* Responsive Design */
+@media screen and (max-width: 650px) {
+  .row {
+    flex-direction: column;
   }
-  
-  html {
-    box-sizing: border-box;
-  }
-  
-  *, *:before, *:after {
-    box-sizing: inherit;
-  }
-  
+
   .column {
-    float: left;
-    width: 33.3%;
-    margin-bottom: 16px;
-    padding: 0 8px;
-  }
-  
-  .card {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    margin: 8px;
-  }
-  
-  .about-section {
-    padding: 50px;
-    text-align: center;
-    background-color: #474e5d;
-    color: white;
-  }
-  
-  .container {
-    padding: 0 16px;
-  }
-  
-  .container::after, .row::after {
-    content: "";
-    clear: both;
-    display: table;
-  }
-  
-  .title {
-    color: black;
-    text-align: center !important;
-  }
-  
-  .button {
-    border: none;
-    outline: 0;
-    display: inline-block;
-    padding: 8px;
-    color: white;
-    background-color: #e53935;
-    text-align: center;
-    cursor: pointer;
     width: 100%;
-    font-weight: bold;
+    margin-bottom: 20px;
   }
-  
-  .button:hover {
-    background-color: #555;
+
+  .action-button {
+    padding: 8px 16px;
+    font-size: 12px;
   }
-  
-  @media screen and (max-width: 650px) {
-    .column {
-      width: 100%;
-      display: block;
-    }
-  }
+}
