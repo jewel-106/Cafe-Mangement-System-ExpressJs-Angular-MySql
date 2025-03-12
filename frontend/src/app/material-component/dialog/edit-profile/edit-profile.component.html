@@ -1,0 +1,51 @@
+<h2 mat-dialog-title>Edit Profile</h2>
+<mat-dialog-content>
+  <form [formGroup]="profileForm">
+    <mat-form-field class="full-width">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" placeholder="Enter your name">
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Contact Number</mat-label>
+      <input matInput formControlName="contactNumber" placeholder="Enter contact number">
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" placeholder="Enter email">
+    </mat-form-field>
+
+    <!-- File input for profile photo -->
+    <div class="file-input-container">
+      <label for="profilePhoto" class="file-input-label">
+        <mat-label>Profile Photo</mat-label>
+        <div class="file-upload-wrapper">
+          <span class="file-input-button">
+            <mat-icon>upload</mat-icon> Choose File
+          </span>
+          <span class="file-input-text" *ngIf="selectedFile; else noFile">
+            {{ selectedFile.name }}
+          </span>
+          <ng-template #noFile>
+            <span class="file-input-text">No file chosen</span>
+          </ng-template>
+        </div>
+      </label>
+      <input
+        type="file"
+        id="profilePhoto"
+        (change)="onFileSelected($event)"
+        accept="image/*"
+        class="file-input"
+      />
+      <img *ngIf="imagePreview" [src]="imagePreview" alt="Profile Preview" width="200" height="180" />
+ 
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="dialogRef.close()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="updateProfile()">Save</button>
+</mat-dialog-actions>

@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { FullComponent } from './layouts/full/full.component';
 import { RouteGuardService } from './services/route-guard.service';
+import { LoginComponent } from './login/login.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -34,6 +35,9 @@ const routes: Routes = [
       }
     ]
   },
+
+  { path: 'login', component: LoginComponent }, // <-- Define Login route
+  
   { path: '**', component: HomeComponent }
 ];
 

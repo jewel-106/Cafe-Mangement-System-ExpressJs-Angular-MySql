@@ -11,7 +11,8 @@ export class GlobalConstants{
     //Regex
     public static nameRegex:string = "[a-zA-Z0-9 ]*";
     // public static emailRegex:string = "[A-Za-z0-9._%-]+@[A-Za-z0-9._%-]+\\.[a-z]{2,3}";
-    public static emailRegex:string = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+    //public static emailRegex:string = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+    public static emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
     public static contactNumberRegex:string = "^[0-9]{10,10}$";
 

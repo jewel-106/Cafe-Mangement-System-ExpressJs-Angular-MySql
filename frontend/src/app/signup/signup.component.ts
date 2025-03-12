@@ -13,68 +13,115 @@ import { GlobalConstants } from '../shared/global-constants';
   styleUrls: ['./signup.component.scss'],
 })
 export class SignupComponent implements OnInit {
-  signupForm: any = FormGroup;
-  responseMessage: any;
+  signupForm!: FormGroup;
+  responseMessage!: string;
+  selectedFile: File | null = null;
+  imagePreview: string | null = null;
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private userService: UserService,
-    private SnackbarService: SnackbarService,
-    private dinalogRef: MatDialogRef<SignupComponent>,
+    private snackbarService: SnackbarService,
+    private dialogRef: MatDialogRef<SignupComponent>,
     private ngxService: NgxUiLoaderService
   ) {}
 
   ngOnInit(): void {
     this.signupForm = this.formBuilder.group({
-      name: [
-        null,
-        [Validators.required, Validators.pattern(GlobalConstants.nameRegex)],
-      ],
-      email: [
-        null,
-        [Validators.required, Validators.pattern(GlobalConstants.emailRegex)],
-      ],
+      name: [null, [Validators.required, Validators.pattern(GlobalConstants.nameRegex)]],
+      email: [null, [Validators.required, Validators.pattern(GlobalConstants.emailRegex)]],
       contactNumber: [null, [Validators.required]],
       password: [null, [Validators.required]],
     });
   }
 
-  handleSubmit() {
-    if (this.signupForm.valid) {
-      console.log('Form Submittd: ', this.signupForm.value);
-    } else {
-      console.log('form is invalid');
+  // Handle file selection
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {  // 10 MB limit
+        alert('File size exceeds the limit of 10MB');
+        return;
+      }
+      this.selectedFile = file;
+  
+      // Preview the image
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
+  }
+
+  // handleSubmit(): void {
+  //   if (!this.signupForm.valid) {
+  //     console.log('Form is invalid');
+  //     return;
+  //   }
+
+  //   this.ngxService.start();
+  //   const formData = new FormData();
+  //   formData.append("name", this.signupForm.value.name);
+  //   formData.append("email", this.signupForm.value.email);
+  //   formData.append("contactNumber", this.signupForm.value.contactNumber);
+  //   formData.append("password", this.signupForm.value.password);
+  //   if (this.selectedFile) {
+  //     formData.append("profile_photo", this.selectedFile, this.selectedFile.name);
+  //   }
+
+  //   this.userService.signup(formData).subscribe(
+  //     (response: any) => {
+  //       this.ngxService.stop();
+  //       this.dialogRef.close();
+  //       this.responseMessage = response?.message;
+  //       this.snackbarService.openSnackBar(this.responseMessage, '');
+  //       this.router.navigate(['/']);
+  //     },
+  //     (error) => {
+  //       this.ngxService.stop();
+  //       console.error('Error during signup:', error);
+  //       this.responseMessage = error.error?.message || GlobalConstants.genericError;
+  //       this.snackbarService.openSnackBar(this.responseMessage, GlobalConstants.error);
+  //     }
+  //   );
+  // }
+
+  handleSubmit(): void {
+    if (!this.signupForm.valid) {
+      console.log('Form is invalid');
+      return;
+    }
+  
     this.ngxService.start();
-    var formData = this.signupForm.value;
-
-    var data = {
-      name: formData.name,
-      email: formData.email,
-      contactNumber: formData.contactNumber,
-      password: formData.password,
-    };
-
-    this.userService.signup(data).subscribe(
+    const formData = new FormData();
+    formData.append("name", this.signupForm.value.name);
+    formData.append("email", this.signupForm.value.email);
+    formData.append("contactNumber", this.signupForm.value.contactNumber);
+    formData.append("password", this.signupForm.value.password);
+    if (this.selectedFile) {
+      formData.append("profile_photo", this.selectedFile, this.selectedFile.name); // Ensure this matches the server's expected field name
+    }
+  
+    // Log FormData for debugging
+    // for (let [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
+  
+    this.userService.signup(formData).subscribe(
       (response: any) => {
         this.ngxService.stop();
-        this.dinalogRef.close();
+        this.dialogRef.close();
         this.responseMessage = response?.message;
-        this.SnackbarService.openSnackBar(this.responseMessage, '');
+        this.snackbarService.openSnackBar(this.responseMessage, '');
         this.router.navigate(['/']);
       },
       (error) => {
         this.ngxService.stop();
-        if (error.error?.message) {
-          this.responseMessage = error.error?.message;
-        } else {
-          this.responseMessage = GlobalConstants.genericError;
-        }
-        this.SnackbarService.openSnackBar(
-          this.responseMessage,
-          GlobalConstants.error
-        );
+        console.error('Error during signup:', error);
+        this.responseMessage = error.error?.message || GlobalConstants.genericError;
+        this.snackbarService.openSnackBar(this.responseMessage, GlobalConstants.error);
       }
     );
   }

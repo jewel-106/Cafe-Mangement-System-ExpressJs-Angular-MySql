@@ -5,8 +5,13 @@ import {
   MatDialogConfig,
 } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ChangePasswordComponent } from 'src/app/material-component/dialog/change-password/change-password.component';
+import { EditProfileComponent } from 'src/app/material-component/dialog/edit-profile/edit-profile.component';
 import { ViewProfileComponent } from 'src/app/material-component/dialog/view-profile/view-profile.component';
+import { SnackbarService } from 'src/app/services/snackbar.service';
+import { UserService } from 'src/app/services/user.service';
+import { GlobalConstants } from 'src/app/shared/global-constants';
 
 @Component({
   selector: 'app-header',
@@ -15,7 +20,13 @@ import { ViewProfileComponent } from 'src/app/material-component/dialog/view-pro
 })
 export class AppHeaderComponent {
   role: any;
-  constructor(private router: Router, private dialog: MatDialog) {}
+  user: any = {};
+  responseMessage: any;
+  dataSource: any[] = [];
+  
+  constructor(private router: Router, private dialog: MatDialog,private userService: UserService,
+      private ngxService: NgxUiLoaderService,
+      private snackbarServic: SnackbarService) {}
 
   logout() {
     const dialogConfig = new MatDialogConfig();
@@ -47,5 +58,6 @@ export class AppHeaderComponent {
     //   dialogRef.close();
     // });
   }
-  editProfile() {}
+  
+  
 }
