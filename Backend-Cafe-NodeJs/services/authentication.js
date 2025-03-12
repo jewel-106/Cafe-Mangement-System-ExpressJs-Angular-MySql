@@ -14,6 +14,7 @@ function authenticateToken(req,res,next){
             return res.sendStatus(403);
         }
         res.locals = response;
+        req.user = response;
         console.log("res.locals.email: ",res.locals.email);
         next();
     })

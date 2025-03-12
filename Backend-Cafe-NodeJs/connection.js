@@ -1,24 +1,22 @@
 const mysql = require('mysql2');
 require('dotenv').config();
 
-var connection = mysql.createConnection({
-    port: process.env.DB_PORT,
-    host:process.env.DB_HOST,
-    user: process.env.DB_USERNAME,
-    password:process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+const connection = mysql.createConnection({
+    port: process.env.DB_PORT || 3306,
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USERNAME || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'test_db',
     connectTimeout: 10000
-
 });
 
-connection.connect((err)=>{
-    if(!err){
-        console.log("Connected Successfully")
-        console.log(`Server is running on 8080`)
-    }
-    else {
-        console.log(err);
+// Establish connection
+connection.connect((err) => {
+    if (!err) {
+        console.log("✅ Connected to MySQL Successfully");
+    } else {
+        console.error("❌ Database Connection Failed:", err.code, err.message);
     }
 });
 
-module.exports =connection;
+module.exports = connection;
