@@ -62,7 +62,7 @@ console.log(req);
             contactNumber,
             hashedPassword,
             profilePhoto ? profilePhoto.filename : null,
-             "true",
+            "true",
             "user",
           ],
           (err, result) => {
